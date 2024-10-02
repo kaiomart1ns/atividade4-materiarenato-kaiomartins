@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Martins Bilheteira</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@700&family=Lora:wght@700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <h1>ExpoPrudente 2024 - 12 a 15 de setembro</h1>
+        <h2>Martins Bilheteira</h2>
+        <a href="cadastro.html">Criar evento</a>
+    </header>
+
+    <div id="eventos-container">
+       
+    </div>
+
+    <footer>
+        <p>Todos os direitos reservados - Martins Bilheteira &copy;</p>
+    </footer>
+
+    <script>
+        async function carregarEventos() {
+            try {
+                const response = await fetch('/api/eventos');
+                const data = await response.json();
+
+               
+                const eventos = Array.isArray(data.eventos) ? data.eventos : [];
+
+                const eventosContainer = document.getElementById('eventos-container');
+
+                if (eventos.length === 0) {
+                    eventosContainer.innerHTML = '<p>Nenhum evento encontrado.</p>';
+                } else {
+                    eventosContainer.innerHTML = eventos.map(evento => `
+                <div>
+                    <h2>${evento.nome}</h2>
+                    <p><strong>Data:</strong> ${new Date(evento.data).toLocaleDateString()}</p>
+                    <p><strong>Local:</strong> ${evento.local}</p>
+                    <p><strong>Preço:</strong> R$ ${evento.preco}</p>
+                    <a href="/eventos/${evento.id}">Ver Detalhes</a>
+                </div>
+            `).join('');
+                }
+            } catch (error) {
+                console.error("Erro ao carregar eventos:", error);
+                const eventosContainer = document.getElementById('eventos-container');
+                eventosContainer.innerHTML = '<p>Erro ao carregar eventos. Tente novamente mais tarde.</p>';
+            }
+        }
+
+        window.onload = carregarEventos;
+    </script>
+</body>
+
+</html>
